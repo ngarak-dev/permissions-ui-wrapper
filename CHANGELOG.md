@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.3-alpha (2025-05-03)
+
+### Changes
+- Updated spatie/laravel-permission library
+
 ## 0.0.2-alpha (2025-05-03)
 
 ### Changes
