@@ -1,18 +1,20 @@
 # Changelog
 
-## 0.0.3-alpha (2025-05-03)
-
+## 0.0.4-alpha (2025-05-03)
 ### Changes
+- Automatic installation of Spatie Permission migrations
+- Super user setup command `permissions-ui:super-user`
 
+## 0.0.3-alpha (2025-05-03)
+### Changes
 - Updated spatie/laravel-permission library
 
 ## 0.0.2-alpha (2025-05-03)
-
 ### Changes
-
 - Updated composer.json to remove conflict on new Laravel version
 
 ## 0.0.1-alpha (2025-05-03)
+- First Alpha Release
 
 ### Features
 
