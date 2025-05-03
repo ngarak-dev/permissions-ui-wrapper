@@ -13,6 +13,7 @@ A UI wrapper for Spatie Laravel-Permission with both Bootstrap and Tailwind CSS 
 - Automatic migrations and config publishing
 - Custom artisan commands for easy installation
 - Customizable views and routes
+- Seeders and factories for quick setup
 
 ## Installation
 
@@ -62,6 +63,52 @@ The new command allows:
 - Creating a new user and assigning the super user role
 - Automatically creating the super admin role if it doesn't exist
 - Assigning all permissions to the role (optional)
+
+### Using Seeders and Factories
+
+The package provides seeders and factories to quickly set up roles and permissions for testing or initial production setup:
+
+```bash
+# Publish seeders and factories
+php artisan permissions-ui:seeders
+
+# Publish only seeders
+php artisan permissions-ui:seeders --no-factories
+
+# Publish only factories
+php artisan permissions-ui:seeders --no-seeders
+```
+
+Once published, you can use the seeders in your application:
+
+```bash
+# Run the permission and role seeder
+php artisan db:seed --class=PermissionRoleSeeder
+```
+
+Seeders include:
+
+- Common CRUD permissions for resources like users, roles, posts, etc.
+- Predefined roles (Super Admin, Admin, Editor, Author, Moderator, User)
+- Proper permission assignments to each role
+
+You can configure the seeder behavior in the `permissions-ui.php` config file under the `seeder` section:
+
+```php
+'seeder' => [
+    // Whether to clear existing permissions and roles before seeding
+    'clear_before_seeding' => false,
+
+    // Whether to create random permissions in addition to the defined ones
+    'create_random_permissions' => false,
+
+    // Whether to create random roles in addition to the defined ones
+    'create_random_roles' => false,
+
+    // If set, this user ID will automatically be assigned the Super Admin role
+    'super_admin_user_id' => null,
+],
+```
 
 ## Configuration
 
@@ -142,9 +189,9 @@ The package registers the following routes by default:
 - `/permissions` - View all permissions
 - `/permissions/create` - Create a new permission
 - `/permissions/{permission}/edit` - Edit a permission
-- `/roles` - View all roles
-- `/roles/create` - Create a new role
-- `/roles/{role}/edit` - Edit a role and assign permissions
+- `/permissions/roles` - View all roles
+- `/permissions/roles/create` - Create a new role
+- `/permissions/roles/{role}/edit` - Edit a role and assign permissions
 - `/permissions/users` - Manage user roles
 - `/permissions/users/{user}/edit` - Edit roles for a specific user
 

@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallPermissionsCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallMigrationsCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\SetSuperUserCommand;
+use NgarakDev\PermissionsUiWrapper\Console\Commands\PublishSeederCommand;
 
 class PermissionsUiWrapperServiceProvider extends ServiceProvider
 {
@@ -42,6 +43,7 @@ class PermissionsUiWrapperServiceProvider extends ServiceProvider
                 InstallPermissionsCommand::class,
                 InstallMigrationsCommand::class,
                 SetSuperUserCommand::class,
+                PublishSeederCommand::class,
             ]);
 
             // Keep the original migrations publishing

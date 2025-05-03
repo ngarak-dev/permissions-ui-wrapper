@@ -52,6 +52,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Seeder Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the permissions and roles seeder.
+    |
+    */
+    'seeder' => [
+        // Whether to clear existing permissions and roles before seeding
+        'clear_before_seeding' => false,
+
+        // Whether to create random permissions in addition to the defined ones
+        'create_random_permissions' => false,
+
+        // Whether to create random roles in addition to the defined ones
+        'create_random_roles' => false,
+
+        // If set, this user ID will automatically be assigned the Super Admin role
+        'super_admin_user_id' => null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Permission Management
     |--------------------------------------------------------------------------
     |
