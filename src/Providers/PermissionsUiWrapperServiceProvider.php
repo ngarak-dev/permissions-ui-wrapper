@@ -7,6 +7,7 @@ use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallPermissionsCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallMigrationsCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\SetSuperUserCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\PublishSeederCommand;
+use Livewire\LivewireServiceProvider;
 
 class PermissionsUiWrapperServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,11 @@ class PermissionsUiWrapperServiceProvider extends ServiceProvider
         // If the user has published routes, they can disable this in config
         if (!config('permissions-ui.disable_package_routes', false)) {
             $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        }
+
+        // Load Livewire routes if Livewire is installed
+        if (class_exists(\Livewire\Livewire::class)) {
+            $this->loadRoutesFrom(__DIR__ . '/../routes/livewire.php');
         }
 
         // Register commands if running in console
@@ -70,5 +76,10 @@ class PermissionsUiWrapperServiceProvider extends ServiceProvider
             __DIR__ . '/../config/permissions-ui.php',
             'permissions-ui'
         );
+
+        // Register the Livewire service provider if Livewire is installed
+        if (class_exists(\Livewire\Livewire::class)) {
+            $this->app->register(LivewireServiceProvider::class);
+        }
     }
 }
