@@ -1,4 +1,5 @@
 # Changelog
+
 ## 0.0.6-alpha (2025-05-03)
 
 ### Changes
@@ -6,6 +7,9 @@
 - Added factories and seeders for roles and permissions
 - Command to publish seeders and factories to application
 - Configuration options for seeder behavior
+- Comprehensive documentation on Spatie Laravel-Permission integration
+- Added examples for Blade directives, middleware, and permission/role checks
+- Documentation for advanced features (UUID, multiple guards, caching)
 
 ## 0.0.5-alpha (2025-05-03)
 

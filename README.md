@@ -155,6 +155,233 @@ Run migrations to add permission groups:
 php artisan migrate
 ```
 
+## Spatie Laravel-Permission Integration
+
+This package provides a user interface for the [Spatie Laravel-Permission](https://github.com/spatie/laravel-permission) package. Here's a comprehensive guide to working with the underlying Spatie features.
+
+### Basic Setup
+
+Ensure your `User` model implements the `HasRoles` trait:
+
+```php
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasRoles;
+
+    // ...
+}
+```
+
+### Working with Permissions
+
+#### Checking Permissions
+
+```php
+// Check if a user has a specific permission
+if ($user->hasPermissionTo('edit articles')) {
+    // ...
+}
+
+// Check if a user has any of the permissions
+if ($user->hasAnyPermission(['edit articles', 'publish articles'])) {
+    // ...
+}
+
+// Check if a user has all permissions
+if ($user->hasAllPermissions(['edit articles', 'publish articles'])) {
+    // ...
+}
+```
+
+#### Using Middleware
+
+This package automatically registers Spatie's middleware. Use them in your routes:
+
+```php
+Route::group(['middleware' => ['permission:publish articles']], function () {
+    // Routes accessible only to users with the 'publish articles' permission
+});
+
+Route::group(['middleware' => ['role:admin']], function () {
+    // Routes accessible only to users with the 'admin' role
+});
+
+Route::group(['middleware' => ['role_or_permission:admin|edit articles']], function () {
+    // Routes accessible to users with either 'admin' role or 'edit articles' permission
+});
+```
+
+#### Blade Directives
+
+Use Spatie's Blade directives in your views:
+
+```blade
+@role('admin')
+    Admin content here
+@endrole
+
+@hasrole('writer')
+    Writer content here
+@endhasrole
+
+@hasanyrole(['writer', 'editor'])
+    Writer or Editor content here
+@endhasanyrole
+
+@hasallroles(['writer', 'admin'])
+    Writer and Admin content here
+@endhasallroles
+
+@unlessrole('admin')
+    Non-admin content here
+@endunlessrole
+
+@can('edit articles')
+    <a href="{{ route('articles.edit', $article) }}">Edit</a>
+@endcan
+
+@canany(['edit articles', 'delete articles'])
+    <div class="dropdown">
+        <button>Actions</button>
+        <div class="dropdown-menu">
+            @can('edit articles')
+                <a href="{{ route('articles.edit', $article) }}">Edit</a>
+            @endcan
+            @can('delete articles')
+                <form action="{{ route('articles.destroy', $article) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">Delete</button>
+                </form>
+            @endcan
+        </div>
+    </div>
+@endcanany
+```
+
+### Working with Roles
+
+#### Assigning Roles
+
+```php
+// Assign a role to a user
+$user->assignRole('writer');
+
+// Assign multiple roles
+$user->assignRole(['writer', 'admin']);
+
+// Alternative syntax
+$user->assignRole('writer', 'admin');
+```
+
+#### Revoking Roles
+
+```php
+// Remove a role from a user
+$user->removeRole('writer');
+
+// Remove multiple roles
+$user->removeRole(['writer', 'admin']);
+```
+
+#### Syncing Roles
+
+```php
+// Remove all roles and assign the given roles
+$user->syncRoles(['writer', 'admin']);
+```
+
+#### Checking Roles
+
+```php
+// Check if a user has a role
+if ($user->hasRole('writer')) {
+    // ...
+}
+
+// Check if a user has any of the roles
+if ($user->hasAnyRole(['writer', 'admin'])) {
+    // ...
+}
+
+// Check if a user has all roles
+if ($user->hasAllRoles(['writer', 'admin'])) {
+    // ...
+}
+```
+
+### Permission Groups
+
+This package extends Spatie's permissions with a grouping feature. The groups are defined in the configuration:
+
+```php
+'permission_groups' => [
+    'user' => [
+        'label' => 'User Management',
+        'description' => 'Permissions related to user management',
+    ],
+    // Add more groups...
+],
+```
+
+You can assign a permission to a group when creating or editing it through the UI, which helps organize permissions logically.
+
+### Super Admin Role
+
+By default, this package looks for a role specified in the config (`permissions_manager_role`) to grant full access to the permissions management UI:
+
+```php
+'permissions_manager_role' => 'super-admin',
+```
+
+Users with this role will have full access to create, edit, and delete roles and permissions.
+
+### Caching
+
+Spatie Laravel-Permission uses caching to speed up permission checks. The cache is automatically reset when:
+
+- Permissions or roles are created, updated, or deleted through the UI
+- Permission/role relationships are modified
+
+If you need to manually clear the cache:
+
+```php
+app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+```
+
+### Database Seeding
+
+This package provides predefined seeders that can be published and customized. To seed a production environment with initial permissions and roles:
+
+```bash
+php artisan db:seed --class=PermissionRoleSeeder
+```
+
+The seeder will create common permissions, roles, and assign them appropriately.
+
+### Multiple Guards
+
+Spatie Laravel-Permission supports multiple authentication guards. This UI package primarily works with the 'web' guard, but the underlying Spatie functionality supports custom guards:
+
+```php
+// Creating a role with a custom guard
+$adminRole = Role::create(['name' => 'admin', 'guard_name' => 'api']);
+
+// Assigning a role with a custom guard
+$user->assignRole('admin', 'api');
+```
+
+### UUID Support
+
+If your application uses UUIDs instead of auto-incrementing IDs, make the following changes after installing:
+
+1. Publish the migrations with `php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"`
+2. Modify the published migrations to use UUID columns
+3. Update your model implementations
+
 ## Usage
 
 ### Select UI Framework
