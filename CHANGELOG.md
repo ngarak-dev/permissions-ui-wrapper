@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.0.7 (2025-05-03)
+
+### Changes
+
+- Added Livewire components for reactive permission management
+- Added PermissionManager component for CRUD operations on permissions
+- Added RolePermissionMatrix component for interactive permission assignment to roles
+- Enhanced installation command with Livewire support options:
+  - `--with-livewire`: Install both standard and Livewire components
+  - `--with-livewire-only`: Install only Livewire components
+- Added dedicated Livewire routes under `/permissions/livewire/`
+- Added documentation for Livewire components and installation options
+- Fixed error handling in the permission manager component
+
 ## 0.0.6-alpha (2025-05-03)
 
 ### Changes
