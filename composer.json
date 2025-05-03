@@ -1,7 +1,7 @@
 {
     "name": "ngarak-dev/permissions-ui-wrapper",
-    "description": "UI Wrapper for Spatie Laravel-Permission with Bootstrap and Tailwind support",
-    "keywords": ["laravel", "permissions", "roles", "ui", "bootstrap", "tailwind"],
+    "description": "UI Wrapper for Spatie Laravel-Permission with Bootstrap, Tailwind, and Livewire support",
+    "keywords": ["laravel", "permissions", "roles", "ui", "bootstrap", "tailwind", "livewire"],
     "type": "library",
     "license": "MIT",
     "authors": [{
@@ -11,7 +11,8 @@
     "require": {
         "php": "^8.1",
         "illuminate/support": "^10.0|^11.0|^12.0",
-        "spatie/laravel-permission": "^6.17"
+        "spatie/laravel-permission": "^6.17",
+        "livewire/livewire": "^3.0"
     },
     "require-dev": {
         "orchestra/testbench": "^8.0|^9.0",
