@@ -1,0 +1,14 @@
+/vendor/
+.idea/
+.vscode/
+.DS_Store
+.env
+.env.backup
+.phpunit.result.cache
+composer.phar
+phpunit.xml
+.php_cs.cache
+*.log
+node_modules/
+npm-debug.log
+yarn-error.log 
