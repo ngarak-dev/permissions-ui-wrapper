@@ -3,11 +3,13 @@
 ## 0.0.3-alpha (2025-05-03)
 
 ### Changes
+
 - Updated spatie/laravel-permission library
 
 ## 0.0.2-alpha (2025-05-03)
 
 ### Changes
+
 - Updated composer.json to remove conflict on new Laravel version
 
 ## 0.0.1-alpha (2025-05-03)
@@ -42,6 +44,8 @@
   - User role overview
   - Bulk role assignment capabilities
   - Searchable user listing
+  - Super user command for quick admin setup
+  - Option to create new user with admin privileges
 
 - **Authorization**
 
@@ -58,6 +62,8 @@
   - Composer script integration
   - Migration sequencing support
   - Force option for overwriting existing files
+  - Automatic installation of Spatie Permission migrations
+  - Super user setup command `permissions-ui:super-user`
 
 - **Integrations**
 
@@ -65,6 +71,7 @@
   - Laravel service provider
   - Laravel route registration
   - Blade template support
+  - Automatic Spatie migrations publishing
 
 - **Developer Experience**
   - Clear documentation
