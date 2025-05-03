@@ -101,6 +101,17 @@ class UserRoleController extends Controller
     private function getViewPath($view)
     {
         $framework = config('permissions-ui.ui_framework', 'bootstrap');
+
+        // First check if the view exists in the permission-wrapper namespace (published views)
+        $customNamespace = config('permissions-ui.views.namespace', 'permission-wrapper');
+        $customView = "{$customNamespace}::{$framework}.{$view}";
+
+        // Check if the custom view exists
+        if (view()->exists($customView)) {
+            return $customView;
+        }
+
+        // Fall back to the package view
         return "permissions-ui::{$framework}.{$view}";
     }
 }

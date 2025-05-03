@@ -35,6 +35,8 @@ class InstallPermissionsCommand extends Command
 
         // Then publish our configuration and migrations
         $this->publishConfig();
+        $this->publishViews();
+        $this->publishRoutes();
         $this->publishMigrations();
 
         $this->info('Installation complete!');
@@ -80,6 +82,78 @@ class InstallPermissionsCommand extends Command
             $params,
             ['--tag' => 'permissions-ui-config']
         ));
+    }
+
+    /**
+     * Publish the views directly to the application's views directory.
+     */
+    protected function publishViews()
+    {
+        $this->info('Publishing views to application views directory...');
+
+        $force = $this->option('force');
+
+        // Source views directory
+        $sourcePath = __DIR__ . '/../../Resources/views';
+
+        // Target directory in application views
+        $targetPath = resource_path('views/permission-wrapper');
+
+        // Create the target directory if it doesn't exist
+        if (!File::exists($targetPath)) {
+            File::makeDirectory($targetPath, 0755, true);
+        }
+
+        // Copy bootstrap views
+        $this->copyDirectory($sourcePath . '/bootstrap', $targetPath . '/bootstrap', $force);
+
+        // Copy tailwind views
+        $this->copyDirectory($sourcePath . '/tailwind', $targetPath . '/tailwind', $force);
+
+        // Copy layouts
+        $this->copyDirectory($sourcePath . '/layouts', $targetPath . '/layouts', $force);
+
+        $this->info('Views published successfully to: ' . $targetPath);
+    }
+
+    /**
+     * Publish the routes to the application's routes directory.
+     */
+    protected function publishRoutes()
+    {
+        $this->info('Publishing routes to application routes directory...');
+
+        $sourceFile = __DIR__ . '/../../routes/web.php';
+        $targetFile = base_path('routes/permission-wrapper.php');
+
+        // Check if the target file already exists
+        if (File::exists($targetFile) && !$this->option('force')) {
+            $this->info('Route file already exists. Use --force to overwrite.');
+            return;
+        }
+
+        // Copy the routes file
+        File::copy($sourceFile, $targetFile);
+
+        // Check if we need to update the main web.php file
+        $webRoutesFile = base_path('routes/web.php');
+        if (File::exists($webRoutesFile)) {
+            $content = File::get($webRoutesFile);
+
+            // Only add the include if it doesn't exist
+            $includeStatement = "require __DIR__.'/permission-wrapper.php';";
+            if (!str_contains($content, $includeStatement)) {
+                $this->info('Adding route include to main web.php file...');
+
+                // Add a comment
+                $routeInclude = "\n// Permissions UI Wrapper Routes\n{$includeStatement}\n";
+
+                // Append to web.php
+                File::append($webRoutesFile, $routeInclude);
+            }
+        }
+
+        $this->info('Routes published successfully to: ' . $targetFile);
     }
 
     /**
@@ -143,6 +217,42 @@ class InstallPermissionsCommand extends Command
             $this->info("Created Migration: $filename");
         } else {
             $this->error("Migration stub not found: $stubPath");
+        }
+    }
+
+    /**
+     * Copy a directory recursively.
+     */
+    protected function copyDirectory($source, $destination, $force = false)
+    {
+        // Create destination if it doesn't exist
+        if (!File::exists($destination)) {
+            File::makeDirectory($destination, 0755, true);
+        }
+
+        $files = File::files($source);
+        foreach ($files as $file) {
+            $targetFile = $destination . '/' . $file->getFilename();
+
+            // Skip if file exists and not forcing
+            if (File::exists($targetFile) && !$force) {
+                $this->info("File already exists: " . $file->getFilename());
+                continue;
+            }
+
+            File::copy($file->getPathname(), $targetFile);
+            $this->info("Published: " . $file->getFilename());
+        }
+
+        // Recursive copy for subdirectories
+        $directories = File::directories($source);
+        foreach ($directories as $directory) {
+            $directoryName = basename($directory);
+            $this->copyDirectory(
+                $directory,
+                $destination . '/' . $directoryName,
+                $force
+            );
         }
     }
 }

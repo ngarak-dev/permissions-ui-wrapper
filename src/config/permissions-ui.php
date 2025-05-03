@@ -27,6 +27,31 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Route Loading
+    |--------------------------------------------------------------------------
+    |
+    | If you have published the routes to your application, you can disable
+    | the package from loading its internal routes. Set this to true if you're
+    | using the published routes in permission-wrapper.php
+    |
+    */
+    'disable_package_routes' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | View Settings
+    |--------------------------------------------------------------------------
+    |
+    | The package can look for views in both the package and your application
+    | directory. Settings related to view loading.
+    |
+    */
+    'views' => [
+        'namespace' => 'permission-wrapper', // The namespace to use for published views
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Permission Management
     |--------------------------------------------------------------------------
     |

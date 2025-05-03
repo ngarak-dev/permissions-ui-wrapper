@@ -16,16 +16,25 @@ class PermissionsUiWrapperServiceProvider extends ServiceProvider
             __DIR__ . '/../config/permissions-ui.php' => config_path('permissions-ui.php'),
         ], 'permissions-ui-config');
 
-        // Publish views
+        // Publish views - this will be handled by the install command directly
+        // We're keeping this for backward compatibility and manual publishing
         $this->publishes([
-            __DIR__ . '/../Resources/views' => resource_path('views/vendor/permissions-ui-wrapper'),
+            __DIR__ . '/../Resources/views' => resource_path('views/permission-wrapper'),
         ], 'permissions-ui-views');
 
-        // Load views
+        // Load views from both package and application directories
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permissions-ui');
 
-        // Load routes
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        // Add a second view namespace that will check the application's views directory first
+        // This allows users to override views while keeping the package views as fallback
+        $this->loadViewsFrom(resource_path('views/permission-wrapper'), 'permission-wrapper');
+
+        // Route loading will be conditional based on config
+        // The default is to load routes from the package
+        // If the user has published routes, they can disable this in config
+        if (!config('permissions-ui.disable_package_routes', false)) {
+            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        }
 
         // Register commands if running in console
         if ($this->app->runningInConsole()) {

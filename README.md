@@ -12,6 +12,7 @@ A UI wrapper for Spatie Laravel-Permission with both Bootstrap and Tailwind CSS 
 - Comprehensive authorization controls
 - Automatic migrations and config publishing
 - Custom artisan commands for easy installation
+- Customizable views and routes
 
 ## Installation
 
@@ -70,11 +71,36 @@ If you want to manually publish the configuration:
 php artisan vendor:publish --tag="permissions-ui-config"
 ```
 
-Publish the views (optional):
+### Views and Routes
+
+The `permissions-ui:install` command automatically:
+
+1. Copies all view files to `resources/views/permission-wrapper/` in your application
+2. Publishes routes to `routes/permission-wrapper.php`
+3. Adds an include statement to your application's `routes/web.php` file
+
+This approach allows you to customize views and routes directly in your application without modifying the package files.
+
+If you prefer to manually publish the views:
 
 ```bash
 php artisan vendor:publish --tag="permissions-ui-views"
 ```
+
+### Customizing Views
+
+All published views are in the `resources/views/permission-wrapper` directory, organized by UI framework (bootstrap/tailwind) and feature type. You can modify these views directly without affecting the package.
+
+### Customizing Routes
+
+After installation, you'll find a `permission-wrapper.php` file in your routes directory. You can modify these routes as needed. To prevent the package from loading its internal routes, set the following in your config:
+
+```php
+// config/permissions-ui.php
+'disable_package_routes' => true,
+```
+
+### Running Migrations
 
 Run migrations to add permission groups:
 
