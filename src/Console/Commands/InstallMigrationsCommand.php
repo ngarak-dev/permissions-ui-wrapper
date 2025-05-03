@@ -30,6 +30,9 @@ class InstallMigrationsCommand extends Command
     {
         $this->info('Installing Permissions UI Wrapper migrations...');
 
+        // First publish the Spatie Permission package migrations
+        $this->publishSpatiePermissions();
+
         // Get the migrations path
         $vendorPath = __DIR__ . '/../../database/migrations/';
         $targetPath = database_path('migrations');
@@ -60,6 +63,23 @@ class InstallMigrationsCommand extends Command
         $this->info('Run `php artisan migrate` to run the migrations.');
 
         return 0;
+    }
+
+    /**
+     * Publish Spatie Permission package resources.
+     */
+    protected function publishSpatiePermissions()
+    {
+        $this->info('Publishing Spatie Permission package migrations...');
+
+        $force = $this->option('force');
+        $params = ['--provider' => "Spatie\Permission\PermissionServiceProvider"];
+
+        if ($force) {
+            $params['--force'] = true;
+        }
+
+        $this->call('vendor:publish', $params);
     }
 
     /**

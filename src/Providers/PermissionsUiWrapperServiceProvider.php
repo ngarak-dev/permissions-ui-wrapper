@@ -5,6 +5,7 @@ namespace NgarakDev\PermissionsUiWrapper\Providers;
 use Illuminate\Support\ServiceProvider;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallPermissionsCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallMigrationsCommand;
+use NgarakDev\PermissionsUiWrapper\Console\Commands\SetSuperUserCommand;
 
 class PermissionsUiWrapperServiceProvider extends ServiceProvider
 {
@@ -31,6 +32,7 @@ class PermissionsUiWrapperServiceProvider extends ServiceProvider
             $this->commands([
                 InstallPermissionsCommand::class,
                 InstallMigrationsCommand::class,
+                SetSuperUserCommand::class,
             ]);
 
             // Keep the original migrations publishing

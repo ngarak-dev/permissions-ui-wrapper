@@ -39,7 +39,28 @@ php artisan permissions-ui:install
 php artisan permissions-ui:migrations
 ```
 
+These commands will automatically publish Spatie Permission package migrations before installing the package's own migrations, ensuring proper setup sequence.
+
 You can use the `--force` flag with either command to overwrite existing files.
+
+### Setting up Super User
+
+After installation, you should set up a super user who can manage permissions and roles:
+
+```bash
+# Set an existing user as super user
+php artisan permissions-ui:super-user {userId}
+
+# Create a new user as super user
+php artisan permissions-ui:super-user --create
+```
+
+The new command allows:
+
+- Setting an existing user as a super user with full permissions management access
+- Creating a new user and assigning the super user role
+- Automatically creating the super admin role if it doesn't exist
+- Assigning all permissions to the role (optional)
 
 ## Configuration
 

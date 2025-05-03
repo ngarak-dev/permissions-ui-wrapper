@@ -30,14 +30,36 @@ class InstallPermissionsCommand extends Command
     {
         $this->info('Installing Permissions UI Wrapper...');
 
+        // First publish the Spatie Permission package migrations
+        $this->publishSpatiePermissions();
+
+        // Then publish our configuration and migrations
         $this->publishConfig();
         $this->publishMigrations();
 
         $this->info('Installation complete!');
         $this->info('');
         $this->info('Please run `php artisan migrate` to create the necessary database tables.');
+        $this->info('To set up a super user, run: php artisan permissions-ui:super-user {userId}');
 
         return 0;
+    }
+
+    /**
+     * Publish Spatie Permission package resources.
+     */
+    protected function publishSpatiePermissions()
+    {
+        $this->info('Publishing Spatie Permission package resources...');
+
+        $force = $this->option('force');
+        $params = ['--provider' => "Spatie\Permission\PermissionServiceProvider"];
+
+        if ($force) {
+            $params['--force'] = true;
+        }
+
+        $this->call('vendor:publish', $params);
     }
 
     /**
