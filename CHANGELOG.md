@@ -2,6 +2,11 @@
 
 ## 0.0.1-alpha (2025-05-03)
 
+### Changes
+- Updated composer.json to remove conflict on new Laravel version
+
+## 0.0.1-alpha (2025-05-03)
+
 ### Features
 
 - **Dual UI Framework Support**
