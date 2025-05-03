@@ -12,7 +12,10 @@ class InstallPermissionsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'permissions-ui:install {--force : Force overwrite existing files}';
+    protected $signature = 'permissions-ui:install 
+        {--force : Force overwrite existing files}
+        {--with-livewire : Install both default and Livewire components}
+        {--with-livewire-only : Install only Livewire components}';
 
     /**
      * The console command description.
@@ -35,12 +38,41 @@ class InstallPermissionsCommand extends Command
 
         // Then publish our configuration and migrations
         $this->publishConfig();
-        $this->publishViews();
-        $this->publishRoutes();
+
+        $withLivewire = $this->option('with-livewire');
+        $livewireOnly = $this->option('with-livewire-only');
+
+        // Handle the installation options
+        if ($livewireOnly) {
+            // Only install Livewire components
+            $this->publishLivewireViews();
+            $this->publishLivewireRoutes();
+        } elseif ($withLivewire) {
+            // Install both default and Livewire components
+            $this->publishViews();
+            $this->publishRoutes();
+            $this->publishLivewireViews();
+            $this->publishLivewireRoutes();
+        } else {
+            // Default: only install standard components
+            $this->publishViews();
+            $this->publishRoutes();
+        }
+
         $this->publishMigrations();
 
+        // Show appropriate completion message based on installation type
         $this->info('Installation complete!');
         $this->info('');
+
+        if ($livewireOnly) {
+            $this->info('Livewire components have been installed successfully.');
+        } elseif ($withLivewire) {
+            $this->info('Both standard and Livewire components have been installed successfully.');
+        } else {
+            $this->info('Standard components have been installed successfully.');
+        }
+
         $this->info('Please run `php artisan migrate` to create the necessary database tables.');
         $this->info('To set up a super user, run: php artisan permissions-ui:super-user {userId}');
 
@@ -254,5 +286,74 @@ class InstallPermissionsCommand extends Command
                 $force
             );
         }
+    }
+
+    /**
+     * Publish the Livewire views directly to the application's views directory.
+     */
+    protected function publishLivewireViews()
+    {
+        $this->info('Publishing Livewire views to application views directory...');
+
+        $force = $this->option('force');
+
+        // Source views directory
+        $sourcePath = __DIR__ . '/../../Resources/views';
+
+        // Target directory in application views
+        $targetPath = resource_path('views/permission-wrapper');
+
+        // Create the target directory if it doesn't exist
+        if (!File::exists($targetPath)) {
+            File::makeDirectory($targetPath, 0755, true);
+        }
+
+        // Copy livewire views
+        $this->copyDirectory($sourcePath . '/livewire', $targetPath . '/livewire', $force);
+
+        // Copy layouts required by livewire views
+        $this->copyDirectory($sourcePath . '/layouts', $targetPath . '/layouts', $force);
+
+        $this->info('Livewire views published successfully to: ' . $targetPath);
+    }
+
+    /**
+     * Publish the Livewire routes to the application's routes directory.
+     */
+    protected function publishLivewireRoutes()
+    {
+        $this->info('Publishing Livewire routes to application routes directory...');
+
+        $sourceFile = __DIR__ . '/../../routes/livewire.php';
+        $targetFile = base_path('routes/permission-wrapper-livewire.php');
+
+        // Check if the target file already exists
+        if (File::exists($targetFile) && !$this->option('force')) {
+            $this->info('Livewire route file already exists. Use --force to overwrite.');
+            return;
+        }
+
+        // Copy the routes file
+        File::copy($sourceFile, $targetFile);
+
+        // Check if we need to update the main web.php file
+        $webRoutesFile = base_path('routes/web.php');
+        if (File::exists($webRoutesFile)) {
+            $content = File::get($webRoutesFile);
+
+            // Only add the include if it doesn't exist
+            $includeStatement = "require __DIR__.'/permission-wrapper-livewire.php';";
+            if (!str_contains($content, $includeStatement)) {
+                $this->info('Adding Livewire route include to main web.php file...');
+
+                // Add a comment
+                $routeInclude = "\n// Permissions UI Wrapper Livewire Routes\n{$includeStatement}\n";
+
+                // Append to web.php
+                File::append($webRoutesFile, $routeInclude);
+            }
+        }
+
+        $this->info('Livewire routes published successfully to: ' . $targetFile);
     }
 }
