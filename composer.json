@@ -1,0 +1,51 @@
+{
+    "name": "ngarak-dev/permissions-ui-wrapper",
+    "description": "UI Wrapper for Spatie Laravel-Permission with Bootstrap and Tailwind support",
+    "keywords": ["laravel", "permissions", "roles", "ui", "bootstrap", "tailwind"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [{
+        "name": "Ngara K",
+        "email": "ngarakiringo@gmail.com"
+    }],
+    "require": {
+        "php": "^7.4|^8.0",
+        "illuminate/support": "^8.0|^9.0|^10.0",
+        "spatie/laravel-permission": "^5.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0|^7.0|^8.0",
+        "phpunit/phpunit": "^9.0|^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "NgarakDev\\PermissionsUiWrapper\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "NgarakDev\\PermissionsUiWrapper\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "NgarakDev\\PermissionsUiWrapper\\Providers\\PermissionsUiWrapperServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@php artisan vendor:publish --tag=permissions-ui-config --ansi --force",
+            "composer dump-autoload"
+        ],
+        "post-update-cmd": [
+            "composer dump-autoload"
+        ],
+        "post-autoload-dump": [
+            "if [ -f artisan ]; then @php artisan permissions-ui:migrations; fi"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
