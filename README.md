@@ -1,11 +1,12 @@
 # Permissions UI Wrapper
 
-A UI wrapper for Spatie Laravel-Permission with both Bootstrap and Tailwind CSS support.
+A UI wrapper for Spatie Laravel-Permission with Bootstrap, Tailwind CSS, and Livewire support.
 
 ## Features
 
 - Complete permission and role management UI
 - Support for both Bootstrap and Tailwind CSS
+- Reactive UI with Livewire components
 - User role assignment interface
 - Permission grouping for better organization
 - Pagination, sorting, and filtering
@@ -36,6 +37,12 @@ If you prefer manual installation, you can use the provided artisan commands:
 ```bash
 # Install everything (config & migrations)
 php artisan permissions-ui:install
+
+# Install both standard and Livewire components
+php artisan permissions-ui:install --with-livewire
+
+# Install only Livewire components
+php artisan permissions-ui:install --with-livewire-only
 
 # Install only migrations
 php artisan permissions-ui:migrations
@@ -146,6 +153,36 @@ After installation, you'll find a `permission-wrapper.php` file in your routes d
 // config/permissions-ui.php
 'disable_package_routes' => true,
 ```
+
+## Livewire Components
+
+This package includes Livewire components for reactive permission management - with livewire make sure to change and use tailwind in `permission-ui.php`:
+
+- `PermissionManager`: A component for managing permissions with CRUD operations
+- `RolePermissionMatrix`: An interactive matrix for assigning permissions to roles
+
+### Installation with Livewire
+
+You can choose to install Livewire components during the installation process:
+
+```bash
+# Install both standard and Livewire components
+php artisan permissions-ui:install --with-livewire
+
+# Install only Livewire components (without standard UI)
+php artisan permissions-ui:install --with-livewire-only
+```
+
+If you install with the `--with-livewire-only` option, only Livewire routes and views will be published.
+
+### Accessing Livewire Components
+
+After installation, the Livewire components are accessible at:
+
+- Permission Manager: `/permissions/livewire/permissions`
+- Role Permission Matrix: `/permissions/livewire/roles-matrix`
+
+The prefix can be customized in the configuration file.
 
 ### Running Migrations
 
