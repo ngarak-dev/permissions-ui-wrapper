@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreatePermissionsUiTables extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        // This migration is a placeholder for any future tables
+        // needed by the permissions UI wrapper.
+        
+        // Currently, we rely on the tables created by
+        // spatie/laravel-permission package and only add a 'group'
+        // column to the permissions table in a separate migration.
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        // No tables to drop in this migration.
+    }
+}
