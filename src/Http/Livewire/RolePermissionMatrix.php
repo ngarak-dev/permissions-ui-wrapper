@@ -134,9 +134,12 @@ class RolePermissionMatrix extends Component
         $this->authorize('manage permissions');
 
         foreach ($this->roles as $role) {
+            // Get selected permission IDs for this role
             $permissionIds = array_keys($this->checkedPermissions[$role->id] ?? []);
-            $permissions = Permission::whereIn('id', $permissionIds)->get();
-            $role->syncPermissions($permissions);
+
+            // Use Spatie's syncPermissions method with an array of IDs
+            // This is supported by the package and avoids the collection issue
+            $role->syncPermissions($permissionIds);
         }
 
         $this->showSuccessAlert('Permissions updated successfully');

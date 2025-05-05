@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.8 (2025-05-05)
+
+### Bug Fixes
+
+- Fixed "Method Illuminate\Database\Eloquent\Collection::getMorphClass does not exist" error in RolePermissionMatrix component
+- Updated layouts to properly include Livewire scripts and styles
+- Improved permission handling in Livewire components
+- Enhanced error handling for authorization checks
+
 ## 0.0.7 (2025-05-03)
 
 ### Changes
