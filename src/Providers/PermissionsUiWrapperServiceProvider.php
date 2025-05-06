@@ -7,6 +7,7 @@ use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallPermissionsCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallMigrationsCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\SetSuperUserCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\PublishSeederCommand;
+use NgarakDev\PermissionsUiWrapper\Console\Commands\PublishAllCommand;
 use NgarakDev\PermissionsUiWrapper\Providers\LivewireServiceProvider;
 
 class PermissionsUiWrapperServiceProvider extends ServiceProvider
@@ -24,13 +25,33 @@ class PermissionsUiWrapperServiceProvider extends ServiceProvider
             __DIR__ . '/../Resources/views' => resource_path('views/permission-wrapper'),
         ], 'permissions-ui-views');
 
+        // Make controllers publishable
+        $this->publishes([
+            __DIR__ . '/../Http/Controllers' => app_path('Http/Controllers/PermissionsUiWrapper'),
+        ], 'permissions-ui-controllers');
+
+        // Make Livewire components publishable
+        $this->publishes([
+            __DIR__ . '/../Http/Livewire' => app_path('Http/Livewire/PermissionsUiWrapper'),
+        ], 'permissions-ui-livewire');
+
+        // Make providers publishable
+        $this->publishes([
+            __DIR__ . '/../Providers' => app_path('Providers/PermissionsUiWrapper'),
+        ], 'permissions-ui-providers');
+
         // Load views from both package and application directories
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permissions-ui');
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permission-wrapper');
 
-        // Add a second view namespace that will check the application's views directory first
+        // Get the configured namespace
+        $configuredNamespace = config('permissions-ui.views.namespace', 'permission-wrapper');
+
+        // Load the package views with both the default namespace and the configured namespace
+        $this->loadViewsFrom(__DIR__ . '/../Resources/views', $configuredNamespace);
+
+        // Add view namespace that will check the application's views directory first
         // This allows users to override views while keeping the package views as fallback
-        $this->loadViewsFrom(resource_path('views/permission-wrapper'), 'permission-wrapper');
+        $this->loadViewsFrom(resource_path("views/{$configuredNamespace}"), $configuredNamespace);
 
         // Route loading will be conditional based on config
         // The default is to load routes from the package
@@ -51,6 +72,7 @@ class PermissionsUiWrapperServiceProvider extends ServiceProvider
                 InstallMigrationsCommand::class,
                 SetSuperUserCommand::class,
                 PublishSeederCommand::class,
+                PublishAllCommand::class,
             ]);
 
             // Keep the original migrations publishing
