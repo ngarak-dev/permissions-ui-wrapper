@@ -7,7 +7,7 @@ use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallPermissionsCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\InstallMigrationsCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\SetSuperUserCommand;
 use NgarakDev\PermissionsUiWrapper\Console\Commands\PublishSeederCommand;
-use Livewire\LivewireServiceProvider;
+use NgarakDev\PermissionsUiWrapper\Providers\LivewireServiceProvider;
 
 class PermissionsUiWrapperServiceProvider extends ServiceProvider
 {
@@ -26,6 +26,7 @@ class PermissionsUiWrapperServiceProvider extends ServiceProvider
 
         // Load views from both package and application directories
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permissions-ui');
+        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permission-wrapper');
 
         // Add a second view namespace that will check the application's views directory first
         // This allows users to override views while keeping the package views as fallback
