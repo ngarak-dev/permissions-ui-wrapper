@@ -6,6 +6,8 @@ use Livewire\Component;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RolePermissionMatrix extends Component
 {
@@ -20,7 +22,11 @@ class RolePermissionMatrix extends Component
     public $selectedGroup = '';
     public $groups = [];
 
-    protected $listeners = ['refresh' => '$refresh'];
+    // In Livewire v3, listeners are defined differently
+    protected function getListeners()
+    {
+        return ['refresh' => '$refresh'];
+    }
 
     public function mount()
     {
@@ -43,24 +49,41 @@ class RolePermissionMatrix extends Component
 
     public function loadPermissions()
     {
-        $query = Permission::query()
-            ->orderBy('group')
-            ->orderBy('name');
+        try {
+            $query = Permission::query()
+                ->orderBy('group')
+                ->orderBy('name');
 
-        // Apply search filter if provided
-        if ($this->searchTerm) {
-            $query->where('name', 'like', "%{$this->searchTerm}%");
+            // Apply search filter if provided
+            if ($this->searchTerm) {
+                $query->where('name', 'like', "%{$this->searchTerm}%");
+            }
+
+            // Filter by group if selected
+            if ($this->selectedGroup) {
+                $query->where('group', $this->selectedGroup);
+            }
+
+            $permissions = $query->get();
+
+            // Convert permissions to arrays for consistent handling
+            $this->permissionsByGroup = $permissions->groupBy('group')->map(function ($group) {
+                return $group->map(function ($permission) {
+                    return [
+                        'id' => $permission->id,
+                        'name' => $permission->name,
+                        'group' => $permission->group,
+                        'guard_name' => $permission->guard_name,
+                    ];
+                })->values()->toArray();
+            })->toArray();
+
+            // Add debugging
+            Log::info('Loaded ' . $permissions->count() . ' permissions');
+        } catch (\Exception $e) {
+            Log::error('Error loading permissions: ' . $e->getMessage());
+            $this->permissionsByGroup = [];
         }
-
-        // Filter by group if selected
-        if ($this->selectedGroup) {
-            $query->where('group', $this->selectedGroup);
-        }
-
-        $permissions = $query->get();
-
-        // Group permissions by their group
-        $this->permissionsByGroup = $permissions->groupBy('group');
     }
 
     public function loadGroups()
@@ -129,20 +152,34 @@ class RolePermissionMatrix extends Component
         }
     }
 
-    public function updatePermissions()
-    {
+    public function updatePermissions() {
         $this->authorize('manage permissions');
 
-        foreach ($this->roles as $role) {
-            // Get selected permission IDs for this role
-            $permissionIds = array_keys($this->checkedPermissions[$role->id] ?? []);
+        DB::beginTransaction();
+        try {
+            foreach ($this->roles as $role) {
+                // Get the selected permission IDs
+                $permissionIds = array_keys(array_filter($this->checkedPermissions[$role->id] ?? []));
 
-            // Use Spatie's syncPermissions method with an array of IDs
-            // This is supported by the package and avoids the collection issue
-            $role->syncPermissions($permissionIds);
+                // Use Spatie's syncPermissions with just IDs
+                $role->syncPermissions($permissionIds);
+
+                Log::info('Updated permissions for role: ' . $role->name . ' with IDs: ' . implode(',', $permissionIds));
+            }
+
+            DB::commit();
+
+            // Clear cache after all updates
+            app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+            $this->showSuccessAlert('Permissions updated successfully');
+            $this->loadRoles();
+            $this->initializeCheckedPermissions();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating permissions: ' . $e->getMessage());
+            $this->dispatch('notify', message: 'Error updating permissions: ' . $e->getMessage());
         }
-
-        $this->showSuccessAlert('Permissions updated successfully');
     }
 
     public function updatedSearchTerm()
@@ -167,10 +204,7 @@ class RolePermissionMatrix extends Component
         $this->successMessage = $message;
         $this->showSuccessMessage = true;
 
-        $this->dispatchBrowserEvent('show-toast', [
-            'message' => $message,
-            'type' => 'success'
-        ]);
+        $this->dispatch('notify', message: $message);
     }
 
     public function getHasAllGroupPermissionsProperty($roleId, $group)
@@ -178,19 +212,27 @@ class RolePermissionMatrix extends Component
         $groupPermissionIds = Permission::where('group', $group)->pluck('id')->toArray();
         $rolePermissions = $this->checkedPermissions[$roleId] ?? [];
 
+        if (empty($groupPermissionIds)) {
+            return false;
+        }
+
         foreach ($groupPermissionIds as $permissionId) {
             if (!isset($rolePermissions[$permissionId])) {
                 return false;
             }
         }
 
-        return !empty($groupPermissionIds);
+        return true;
     }
 
     public function getHasAnyGroupPermissionsProperty($roleId, $group)
     {
         $groupPermissionIds = Permission::where('group', $group)->pluck('id')->toArray();
         $rolePermissions = $this->checkedPermissions[$roleId] ?? [];
+
+        if (empty($groupPermissionIds)) {
+            return false;
+        }
 
         foreach ($groupPermissionIds as $permissionId) {
             if (isset($rolePermissions[$permissionId])) {

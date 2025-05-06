@@ -5,7 +5,7 @@
     <div class="flex flex-wrap gap-4 mb-6">
         <div class="w-full md:w-auto flex-1">
             <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search Permissions</label>
-            <input type="text" wire:model.debounce.300ms="searchTerm" placeholder="Search by name..."
+            <input type="text" wire:model.live.debounce.300ms="searchTerm" placeholder="Search by name..."
                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
         <div class="w-full md:w-auto flex-1">
@@ -79,13 +79,13 @@
                     @foreach($permissions as $permission)
                     <tr>
                         <td class="sticky left-0 bg-white p-4 border-b">
-                            {{ $permission->name }}
+                            {{ is_array($permission) ? $permission['name'] : $permission->name }}
                         </td>
                         @foreach($roles as $role)
                         <td class="p-4 border-b text-center">
                             <label class="inline-flex items-center cursor-pointer">
                                 <input type="checkbox"
-                                    wire:model="checkedPermissions.{{ $role->id }}.{{ $permission->id }}"
+                                    wire:model="checkedPermissions.{{ $role->id }}.{{ is_array($permission) ? $permission['id'] : $permission->id }}"
                                     class="form-checkbox h-5 w-5 text-blue-600">
                             </label>
                         </td>
@@ -109,15 +109,4 @@
             </div>
         </form>
     </div>
-
-    <!-- Toast JS for notifications -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            window.addEventListener('show-toast', event => {
-                // You can implement a toast notification system here
-                // or use a library like Toastify or SweetAlert2
-                alert(event.detail.message);
-            });
-        });
-    </script>
 </div>
