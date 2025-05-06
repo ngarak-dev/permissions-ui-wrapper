@@ -4,7 +4,7 @@
             <h2 class="text-xl font-semibold">Permissions Management</h2>
             <div class="flex space-x-2">
                 <div class="relative">
-                    <input type="text" wire:model.debounce.300ms="search" placeholder="Search permissions..."
+                    <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search permissions..."
                         class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
                     @if ($search)
                     <button wire:click="$set('search', '')"
@@ -105,14 +105,14 @@
             <form wire:submit.prevent="save">
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
-                    <input type="text" wire:model.defer="name"
+                    <input type="text" wire:model.blur="name"
                         class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         placeholder="Enter permission name">
                     @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Group</label>
-                    <select wire:model.defer="group"
+                    <select wire:model.blur="group"
                         class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                         <option value="">Select a group</option>
                         @foreach($groups as $key => $group)
@@ -122,7 +122,7 @@
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Guard</label>
-                    <input type="text" wire:model.defer="guard_name"
+                    <input type="text" wire:model.blur="guard_name"
                         class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     @error('guard_name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>

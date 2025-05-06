@@ -92,7 +92,10 @@ class PermissionManager extends Component
         $this->authorize('manage permissions');
         $this->permission->delete();
         $this->confirmingDelete = false;
-        $this->emit('notify', 'Permission deleted successfully.');
+        $this->dispatch('notify', [
+            'message' => 'Permission deleted successfully.',
+            'type' => 'success'
+        ]);
     }
 
     public function save()
@@ -118,7 +121,10 @@ class PermissionManager extends Component
         }
 
         $this->showModal = false;
-        $this->emit('notify', $message);
+        $this->dispatch('notify', [
+            'message' => $message,
+            'type' => 'success'
+        ]);
     }
 
     public function closeModal()
