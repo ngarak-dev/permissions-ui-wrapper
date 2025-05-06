@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.0.9 (2025-05-06)
+
+### Bug Fixes
+
+- Fixed issue where removing permissions wasn't being saved correctly
+- Added database transactions for permission updates to ensure integrity
+- Updated components to be compatible with Livewire v3
+- Improved permission syncing mechanism using Eloquent relations
+
+### Enhancements
+
+- Added Toastify for improved notification system
+- Implemented modern toast notifications for user feedback
+- Consistent notification styling across all components
+- Standardized event dispatching format for better maintainability
+
 ## 0.0.8 (2025-05-05)
 
 ### Bug Fixes
