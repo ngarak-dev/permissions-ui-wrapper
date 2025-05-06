@@ -1,4 +1,8 @@
-@extends('permissions-ui::layouts.app')
+@php
+$namespace = config('permissions-ui.views.namespace', 'permission-wrapper');
+@endphp
+
+@extends($namespace . '::layouts.app')
 
 @section('content')
 <div class="container">
@@ -12,9 +16,9 @@
 
                 <div class="card-body">
                     @if (session('success'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('success') }}
-                        </div>
+                    <div class="alert alert-success" role="alert">
+                        {{ session('success') }}
+                    </div>
                     @endif
 
                     <table class="table">
@@ -27,18 +31,21 @@
                         </thead>
                         <tbody>
                             @foreach ($permissions as $permission)
-                                <tr>
-                                    <td>{{ $permission->id }}</td>
-                                    <td>{{ $permission->name }}</td>
-                                    <td>
-                                        <a href="{{ route('permissions.edit', $permission) }}" class="btn btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('permissions.destroy', $permission) }}" method="POST" style="display: inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td>{{ $permission->id }}</td>
+                                <td>{{ $permission->name }}</td>
+                                <td>
+                                    <a href="{{ route('permissions.edit', $permission) }}"
+                                        class="btn btn-sm btn-primary">Edit</a>
+                                    <form action="{{ route('permissions.destroy', $permission) }}" method="POST"
+                                        style="display: inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Are you sure?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>

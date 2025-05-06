@@ -24,7 +24,14 @@
 </head>
 
 <body class="{{ config('permissions-ui.ui_framework') === 'bootstrap' ? '' : 'bg-gray-100' }}">
-    <div class="{{ config('permissions-ui.ui_framework') === 'bootstrap' ? 'container mt-4' : '' }}">
+    @php
+        $namespace = config('permissions-ui.views.namespace', 'permission-wrapper');
+    @endphp
+
+    @include($namespace . '::layouts.partials.navigation')
+
+    <div
+        class="{{ config('permissions-ui.ui_framework') === 'bootstrap' ? 'container mt-4' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6' }}">
         @yield('content')
     </div>
 

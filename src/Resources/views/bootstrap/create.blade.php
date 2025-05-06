@@ -1,4 +1,8 @@
-@extends('permissions-ui::layouts.app')
+@php
+$namespace = config('permissions-ui.views.namespace', 'permission-wrapper');
+@endphp
+
+@extends($namespace . '::layouts.app')
 
 @section('content')
 <div class="container">

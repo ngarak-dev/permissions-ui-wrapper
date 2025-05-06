@@ -47,16 +47,22 @@ class InstallPermissionsCommand extends Command
             // Only install Livewire components
             $this->publishLivewireViews();
             $this->publishLivewireRoutes();
+            $this->publishLivewireComponents();
         } elseif ($withLivewire) {
             // Install both default and Livewire components
             $this->publishViews();
             $this->publishRoutes();
+            $this->publishControllers();
+            $this->publishProviders();
             $this->publishLivewireViews();
             $this->publishLivewireRoutes();
+            $this->publishLivewireComponents();
         } else {
             // Default: only install standard components
             $this->publishViews();
             $this->publishRoutes();
+            $this->publishControllers();
+            $this->publishProviders();
         }
 
         $this->publishMigrations();
@@ -128,8 +134,11 @@ class InstallPermissionsCommand extends Command
         // Source views directory
         $sourcePath = __DIR__ . '/../../Resources/views';
 
+        // Get the configured namespace
+        $configuredNamespace = config('permissions-ui.views.namespace', 'permission-wrapper');
+
         // Target directory in application views
-        $targetPath = resource_path('views/permission-wrapper');
+        $targetPath = resource_path("views/{$configuredNamespace}");
 
         // Create the target directory if it doesn't exist
         if (!File::exists($targetPath)) {
@@ -355,5 +364,83 @@ class InstallPermissionsCommand extends Command
         }
 
         $this->info('Livewire routes published successfully to: ' . $targetFile);
+    }
+
+    /**
+     * Publish the controllers to the application's Controllers directory.
+     */
+    protected function publishControllers()
+    {
+        $this->info('Publishing controllers to application directory...');
+
+        $force = $this->option('force');
+
+        // Source controllers directory
+        $sourcePath = __DIR__ . '/../../Http/Controllers';
+
+        // Target directory in application
+        $targetPath = app_path('Http/Controllers/PermissionsUiWrapper');
+
+        // Create the target directory if it doesn't exist
+        if (!File::exists($targetPath)) {
+            File::makeDirectory($targetPath, 0755, true);
+        }
+
+        // Copy controllers
+        $this->copyDirectory($sourcePath, $targetPath, $force);
+
+        $this->info('Controllers published successfully to: ' . $targetPath);
+    }
+
+    /**
+     * Publish the Livewire components to the application's Livewire directory.
+     */
+    protected function publishLivewireComponents()
+    {
+        $this->info('Publishing Livewire components to application directory...');
+
+        $force = $this->option('force');
+
+        // Source Livewire components directory
+        $sourcePath = __DIR__ . '/../../Http/Livewire';
+
+        // Target directory in application
+        $targetPath = app_path('Http/Livewire/PermissionsUiWrapper');
+
+        // Create the target directory if it doesn't exist
+        if (!File::exists($targetPath)) {
+            File::makeDirectory($targetPath, 0755, true);
+        }
+
+        // Copy Livewire components
+        $this->copyDirectory($sourcePath, $targetPath, $force);
+
+        $this->info('Livewire components published successfully to: ' . $targetPath);
+    }
+
+    /**
+     * Publish the providers to the application's Providers directory.
+     */
+    protected function publishProviders()
+    {
+        $this->info('Publishing providers to application directory...');
+
+        $force = $this->option('force');
+
+        // Source providers directory
+        $sourcePath = __DIR__ . '/../../Providers';
+
+        // Target directory in application
+        $targetPath = app_path('Providers/PermissionsUiWrapper');
+
+        // Create the target directory if it doesn't exist
+        if (!File::exists($targetPath)) {
+            File::makeDirectory($targetPath, 0755, true);
+        }
+
+        // Copy providers
+        $this->copyDirectory($sourcePath, $targetPath, $force);
+
+        $this->info('Providers published successfully to: ' . $targetPath);
     }
 }

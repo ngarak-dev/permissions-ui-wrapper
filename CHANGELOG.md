@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0 (2025-05-06)
+
+### Changes
+
+- Made all components publishable (Controllers, Livewire, Providers)
+- Added new `permissions-ui:publish-all` command to publish all components at once
+- Updated all UI blades to use the namespace configured in `permissions-ui.views.namespace`
+- Updated all `@extends` statements to use the configurable namespace
+- Improved views publishing to use the configured namespace directory
+- Added Livewire component prefixes based on the configured namespace
+- Ensured backward compatibility with existing views and component names
+
 ## 0.0.9 (2025-05-06)
 
 ### Bug Fixes

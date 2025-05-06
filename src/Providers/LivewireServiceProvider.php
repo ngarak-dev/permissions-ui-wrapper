@@ -39,6 +39,15 @@ class LivewireServiceProvider extends ServiceProvider
      */
     protected function registerLivewireComponents()
     {
+        // Get the configured namespace for component prefixes
+        $configuredNamespace = config('permissions-ui.views.namespace', 'permission-wrapper');
+        $prefix = str_replace(['-', '_'], '', $configuredNamespace);
+
+        // Standard component registration with configured prefix
+        Livewire::component($prefix . '-permission-manager', PermissionManager::class);
+        Livewire::component($prefix . '-role-permission-matrix', RolePermissionMatrix::class);
+
+        // Add backwards compatibility aliases
         Livewire::component('permission-manager', PermissionManager::class);
         Livewire::component('role-permission-matrix', RolePermissionMatrix::class);
     }

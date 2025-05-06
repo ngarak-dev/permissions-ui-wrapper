@@ -52,6 +52,62 @@ These commands will automatically publish Spatie Permission package migrations b
 
 You can use the `--force` flag with either command to overwrite existing files.
 
+### Publishing All Components
+
+If you want to make all components available in your application for customization, you can use the publish-all command:
+
+```bash
+# Publish all components (controllers, views, providers, etc.)
+php artisan permissions-ui:publish-all
+
+# Include Livewire components
+php artisan permissions-ui:publish-all --with-livewire
+
+# Force overwrite existing files
+php artisan permissions-ui:publish-all --force
+```
+
+This will publish:
+
+- Controllers (to `app/Http/Controllers/PermissionsUiWrapper`)
+- Livewire components (to `app/Http/Livewire/PermissionsUiWrapper`)
+- Providers (to `app/Providers/PermissionsUiWrapper`)
+- Views (to `resources/views/{your-namespace}`)
+- Config and migrations
+
+### Customizing the View Namespace
+
+By default, the package uses `permission-wrapper` as the namespace for views. You can change this in the config:
+
+```php
+// config/permissions-ui.php
+'views' => [
+    'namespace' => 'your-custom-namespace', // Default: 'permission-wrapper'
+],
+```
+
+After changing this, you should re-publish the views to the new namespace location:
+
+```bash
+php artisan permissions-ui:install --force
+```
+
+This will publish the views to `resources/views/your-custom-namespace/`.
+
+### Template Namespace Consistency
+
+All templates in the package use the configurable namespace for includes and extends:
+
+```blade
+@php
+$namespace = config('permissions-ui.views.namespace', 'permission-wrapper');
+@endphp
+
+@extends($namespace . '::layouts.app')
+```
+
+This ensures that all view resolution is consistent with your configured namespace, even for deeply nested includes and components.
+
 ### Setting up Super User
 
 After installation, you should set up a super user who can manage permissions and roles:
